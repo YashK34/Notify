@@ -1,6 +1,7 @@
 package com.example.note
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -14,6 +15,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.note.recyclerViewRelatedFiles.NoteAdapter
@@ -50,6 +52,27 @@ class MainActivity : AppCompatActivity() {
                 adapter1.setNotes(it)
             }
         })
+        val itemTouchHelperCallback=object :ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT){
+            override fun onMove(recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val restore=adapter1.getNoteAt(viewHolder.adapterPosition)
+               mainViewModel.delete(restore)
+                val snak=Snackbar.make(root,"The Task is Complete",Snackbar.LENGTH_LONG)
+                    snak.setAction("Undo"){
+                        mainViewModel.insert(restore)
+                    }
+                        .setActionTextColor(Color.RED)
+                snak.show()
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
+        itemTouchHelper.attachToRecyclerView(recycler_view)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -67,7 +90,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
@@ -78,7 +101,14 @@ class MainActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_settings ->
+                true
+            R.id.delete_all_notes->{
+                mainViewModel.deleteAllNotes()
+                Toast.makeText(this, "All Tasks Deleted", Toast.LENGTH_SHORT).show()
+                true
+            }
+
             else -> super.onOptionsItemSelected(item)
         }
     }

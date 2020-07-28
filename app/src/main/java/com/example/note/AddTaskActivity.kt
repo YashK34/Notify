@@ -30,8 +30,7 @@ class AddTaskActivity : AppCompatActivity() {
                 saveNotes()
                 true
             }
-            else ->
-                super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
         }
     }
     companion object{

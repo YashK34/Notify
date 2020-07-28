@@ -54,6 +54,7 @@ abstract class NoteDatabase:RoomDatabase() {
         }
         suspend fun populateDatabase(noteDao: NoteDao) {
             noteDao.deleteAllNotes()
+            noteDao.deleteAllNotes()
             noteDao.insert(Note(title = "Title1", description = "Description1", priority = 1))
             noteDao.insert(Note(title = "Title2", description = "Description2", priority = 2))
             noteDao.insert(Note(title = "Title3", description = "Description3", priority = 3))
