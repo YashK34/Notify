@@ -9,6 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -17,21 +18,26 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.note.recyclerViewRelatedFiles.NoteAdapter
 import com.example.note.roomRelatedFiles.MainViewModel
+import com.example.note.roomRelatedFiles.Note
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
      private lateinit var mainViewModel: MainViewModel
+    companion object{
+        const val REQUEST_CODE =1
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
        fab.setOnClickListener {
-            startActivity(Intent(this,AddTaskActivity::class.java))
+           val intent = Intent(this@MainActivity,AddTaskActivity::class.java)
+           startActivityForResult(intent, REQUEST_CODE)
         }
         mainViewModel=ViewModelProvider(this).get(MainViewModel::class.java)
         mainViewModel.text.observe(this, Observer {
-            text_home.text=it
+            //text_home.text=it
         })
         val adapter1= NoteAdapter()
         with(recycler_view) {
@@ -44,6 +50,21 @@ class MainActivity : AppCompatActivity() {
                 adapter1.setNotes(it)
             }
         })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode== REQUEST_CODE&&resultCode==RESULT_OK){
+                val  title = data?.getStringExtra(AddTaskActivity.EXTRA_TITLE)
+                val description = data?.getStringExtra(AddTaskActivity.EXTRA_DESCRIPTION)
+                val  priority = data?.getIntExtra(AddTaskActivity.EXTRA_PRIORITY, 1)
+            val note= Note(title = title!!,description = description!!,priority = priority!!)
+            mainViewModel.insert(note)
+            Toast.makeText(this, "Note Saved", Toast.LENGTH_SHORT).show()
+        }
+        else{
+            Toast.makeText(this, "Note not saved", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
