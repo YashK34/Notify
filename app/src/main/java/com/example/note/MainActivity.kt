@@ -9,11 +9,18 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.note.recyclerViewRelatedFiles.NoteAdapter
+import com.example.note.roomRelatedFiles.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-
+     private lateinit var mainViewModel: MainViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -22,6 +29,21 @@ class MainActivity : AppCompatActivity() {
        fab.setOnClickListener {
             startActivity(Intent(this,AddTaskActivity::class.java))
         }
+        mainViewModel=ViewModelProvider(this).get(MainViewModel::class.java)
+        mainViewModel.text.observe(this, Observer {
+            text_home.text=it
+        })
+        val adapter1= NoteAdapter()
+        with(recycler_view) {
+            layoutManager = LinearLayoutManager(context)
+            hasFixedSize()
+            adapter = adapter1
+        }
+        mainViewModel.allNotes.observe(this, Observer {
+            it?.let {
+                adapter1.setNotes(it)
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
