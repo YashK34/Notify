@@ -11,6 +11,7 @@ import com.example.note.roomRelatedFiles.Note
 
 class NoteAdapter : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
     private var notes = emptyList<Note>()
+
 //        set(value) {
 //            field = value
 //            notifyDataSetChanged()

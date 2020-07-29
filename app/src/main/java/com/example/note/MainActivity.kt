@@ -15,6 +15,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -38,15 +39,17 @@ class MainActivity : AppCompatActivity() {
            startActivityForResult(intent, REQUEST_CODE)
         }
         mainViewModel=ViewModelProvider(this).get(MainViewModel::class.java)
-        mainViewModel.text.observe(this, Observer {
-            //text_home.text=it
-        })
+//        mainViewModel.text.observe(this, Observer {
+//            //text_home.text=it
+//        })
         val adapter1= NoteAdapter()
         with(recycler_view) {
             layoutManager = LinearLayoutManager(context)
             hasFixedSize()
             adapter = adapter1
+            //addItemDecoration(DividerItemDecoration(this@MainActivity,DividerItemDecoration.VERTICAL))
         }
+
         mainViewModel.allNotes.observe(this, Observer {
             it?.let {
                 adapter1.setNotes(it)
