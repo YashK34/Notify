@@ -32,6 +32,9 @@ class NoteAdapter : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
             textViewDescription.text = currentNote.description
             textViewPriority.text = currentNote.priority.toString()
             }
+        holder.itemView.setOnClickListener {
+
+        }
     }
 
     internal fun setNotes(notes: List<Note>) {
