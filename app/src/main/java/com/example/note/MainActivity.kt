@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Note Saved", Toast.LENGTH_SHORT).show()
         }
         else if(requestCode== EDIT_REQUEST_CODE&&resultCode==RESULT_OK){
-            val id=data?.getIntExtra(AddEditTaskActivity.EXTRA_ID,-1)
+            val id=data?.getIntExtra(EXTRA_ID,-1)
             if (id==-1){
                 Toast.makeText(applicationContext, "Note can't be updated", Toast.LENGTH_SHORT).show()
                 return
