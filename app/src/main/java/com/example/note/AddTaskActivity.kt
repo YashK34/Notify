@@ -52,5 +52,6 @@ class AddTaskActivity : AppCompatActivity() {
         data.putExtra(EXTRA_PRIORITY, priority)
         setResult(Activity.RESULT_OK, data)
         finish()
+
     }
 }

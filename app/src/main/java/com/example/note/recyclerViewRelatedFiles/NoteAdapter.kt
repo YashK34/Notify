@@ -1,10 +1,14 @@
 package com.example.note.recyclerViewRelatedFiles
 
+import android.content.Intent
+import android.content.IntentSender
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.example.note.AddTaskActivity
 import com.example.note.R
 import com.example.note.roomRelatedFiles.Note
 
@@ -33,7 +37,7 @@ class NoteAdapter : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
             textViewPriority.text = currentNote.priority.toString()
             }
         holder.itemView.setOnClickListener {
-
+            //Toast.makeText(, "Hello", Toast.LENGTH_SHORT).show()
         }
     }
 

@@ -111,7 +111,6 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "All Tasks Deleted", Toast.LENGTH_SHORT).show()
                 true
             }
-
             else -> super.onOptionsItemSelected(item)
         }
     }
