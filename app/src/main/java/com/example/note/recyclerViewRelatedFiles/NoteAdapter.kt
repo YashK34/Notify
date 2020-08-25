@@ -1,26 +1,34 @@
 package com.example.note.recyclerViewRelatedFiles
 
-import android.content.Intent
-import android.content.IntentSender
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.example.note.AddTaskActivity
 import com.example.note.R
 import com.example.note.roomRelatedFiles.Note
 
 
 class NoteAdapter : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
     private var notes = emptyList<Note>()
+    var onItemClickListener:NoteOnItemClickListener?=null
 
 //        set(value) {
 //            field = value
 //            notifyDataSetChanged()
 //        }
-
+    internal fun setNotes(notes: List<Note>) {
+        this.notes = notes
+        notifyDataSetChanged()
+    }
+    internal fun getNoteAt(position: Int):Note{
+        return notes[position]
+    }
+    class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val textViewTitle: TextView = itemView.findViewById(R.id.text_view_title)
+        val textViewDescription: TextView = itemView.findViewById(R.id.text_view_description);
+        val textViewPriority: TextView = itemView.findViewById(R.id.text_view_priority);
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.note_item, parent, false)
@@ -35,23 +43,13 @@ class NoteAdapter : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
             textViewTitle.text = currentNote.title
             textViewDescription.text = currentNote.description
             textViewPriority.text = currentNote.priority.toString()
+            itemView.setOnClickListener {
+                onItemClickListener?.onItemClick(notes[position])
             }
-        holder.itemView.setOnClickListener {
-            //Toast.makeText(, "Hello", Toast.LENGTH_SHORT).show()
         }
-    }
 
-    internal fun setNotes(notes: List<Note>) {
-        this.notes = notes
-        notifyDataSetChanged()
     }
-    internal fun getNoteAt(position: Int):Note{
-        return notes[position]
-    }
-
-    inner class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textViewTitle: TextView = itemView.findViewById(R.id.text_view_title)
-        val textViewDescription: TextView = itemView.findViewById(R.id.text_view_description);
-        val textViewPriority: TextView = itemView.findViewById(R.id.text_view_priority);
-    }
+}
+interface NoteOnItemClickListener{
+    fun onItemClick(item:Note)
 }

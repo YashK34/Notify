@@ -3,23 +3,19 @@ package com.example.note
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.Button
 import android.widget.Toast
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.note.AddEditTaskActivity.Companion.EXTRA_ID
 import com.example.note.recyclerViewRelatedFiles.NoteAdapter
+import com.example.note.recyclerViewRelatedFiles.NoteOnItemClickListener
 import com.example.note.roomRelatedFiles.MainViewModel
 import com.example.note.roomRelatedFiles.Note
 import kotlinx.android.synthetic.main.activity_main.*
@@ -27,16 +23,18 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
      private lateinit var mainViewModel: MainViewModel
     companion object{
-        const val REQUEST_CODE =1
+        const val ADD_REQUEST_CODE =1
+        const val EDIT_REQUEST_CODE =2
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
        fab.setOnClickListener {
-           val intent = Intent(this@MainActivity,AddTaskActivity::class.java)
-           startActivityForResult(intent, REQUEST_CODE)
+           val intent = Intent(this@MainActivity,AddEditTaskActivity::class.java)
+           startActivityForResult(intent, ADD_REQUEST_CODE)
         }
         mainViewModel=ViewModelProvider(this).get(MainViewModel::class.java)
 //        mainViewModel.text.observe(this, Observer {
@@ -66,27 +64,54 @@ class MainActivity : AppCompatActivity() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val restore=adapter1.getNoteAt(viewHolder.adapterPosition)
                mainViewModel.delete(restore)
-                val snak=Snackbar.make(root,"The Task is Complete",Snackbar.LENGTH_LONG)
-                    snak.setAction("Undo"){
+                val snack=Snackbar.make(root,"The Task is Complete",Snackbar.LENGTH_LONG)
+                    snack.setAction("Undo"){
                         mainViewModel.insert(restore)
                     }
                         .setActionTextColor(Color.RED)
-                snak.show()
+                snack.show()
             }
         }
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
         itemTouchHelper.attachToRecyclerView(recycler_view)
+        adapter1.onItemClickListener=object :NoteOnItemClickListener{
+            override fun onItemClick(item: Note) {
+                val intent=Intent(this@MainActivity,AddEditTaskActivity::class.java)
+                intent.putExtra(EXTRA_ID,item.id)
+                intent.putExtra(AddEditTaskActivity.EXTRA_TITLE,item.title)
+                intent.putExtra(AddEditTaskActivity.EXTRA_DESCRIPTION,item.description)
+                intent.putExtra(AddEditTaskActivity.EXTRA_PRIORITY, item.priority)
+                startActivityForResult(intent, EDIT_REQUEST_CODE)
+            }
+
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode== REQUEST_CODE&&resultCode==RESULT_OK){
-                val  title = data?.getStringExtra(AddTaskActivity.EXTRA_TITLE)
-                val description = data?.getStringExtra(AddTaskActivity.EXTRA_DESCRIPTION)
-                val  priority = data?.getIntExtra(AddTaskActivity.EXTRA_PRIORITY, 1)
+        if(requestCode== ADD_REQUEST_CODE&&resultCode==RESULT_OK){
+                val  title = data?.getStringExtra(AddEditTaskActivity.EXTRA_TITLE)
+                val description = data?.getStringExtra(AddEditTaskActivity.EXTRA_DESCRIPTION)
+                val  priority = data?.getIntExtra(AddEditTaskActivity.EXTRA_PRIORITY, 1)
             val note= Note(title = title!!,description = description!!,priority = priority!!)
             mainViewModel.insert(note)
             Toast.makeText(this, "Note Saved", Toast.LENGTH_SHORT).show()
+        }
+        else if(requestCode== EDIT_REQUEST_CODE&&resultCode==RESULT_OK){
+            val id=data?.getIntExtra(AddEditTaskActivity.EXTRA_ID,-1)
+            if (id==-1){
+                Toast.makeText(applicationContext, "Note can't be updated", Toast.LENGTH_SHORT).show()
+                return
+            }
+                val  title = data?.getStringExtra(AddEditTaskActivity.EXTRA_TITLE)
+                val description = data?.getStringExtra(AddEditTaskActivity.EXTRA_DESCRIPTION)
+                val  priority = data?.getIntExtra(AddEditTaskActivity.EXTRA_PRIORITY, 1)
+                val note= Note(title = title!!,description = description!!,priority = priority!!)
+                if (id != null) {
+                    note.id=id
+                }
+                mainViewModel.update(note)
+                Toast.makeText(applicationContext, "Note Updated", Toast.LENGTH_SHORT).show()
         }
         else{
             Toast.makeText(this, "Note not saved", Toast.LENGTH_SHORT).show()

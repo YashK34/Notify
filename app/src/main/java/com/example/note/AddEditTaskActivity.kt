@@ -9,7 +9,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_add_task.*
 
-class AddTaskActivity : AppCompatActivity() {
+class AddEditTaskActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_task)
@@ -18,7 +18,17 @@ class AddTaskActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24)
         supportActionBar?.elevation=4.4f
-        supportActionBar?.title="Add Task"
+        val i=intent
+        if (i.hasExtra(EXTRA_ID)){
+            supportActionBar?.title="Edit Task"
+            edit_text_title.setText(i.getStringExtra(EXTRA_TITLE))
+            edit_text_description.setText(i.getStringExtra(EXTRA_DESCRIPTION))
+            number_picker_priority.value=i.getIntExtra(EXTRA_PRIORITY,1)
+        }else{
+            supportActionBar?.title="Add Task"
+        }
+
+
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.add_task_menu,menu)
@@ -37,6 +47,7 @@ class AddTaskActivity : AppCompatActivity() {
         const val EXTRA_TITLE="title"
         const val EXTRA_DESCRIPTION="description"
         const val EXTRA_PRIORITY="priority"
+        const val EXTRA_ID="id"
     }
     private fun saveNotes() {
         val title: String = edit_text_title.text.toString()
@@ -47,6 +58,10 @@ class AddTaskActivity : AppCompatActivity() {
             Toast.makeText(this, "Please insert a title and description", Toast.LENGTH_SHORT).show()
             return
         }
+        val id=intent.getIntExtra(EXTRA_ID,-1)
+         if(id!=-1){
+             data.putExtra(EXTRA_ID,id)
+         }
         data.putExtra(EXTRA_TITLE, title)
         data.putExtra(EXTRA_DESCRIPTION, description)
         data.putExtra(EXTRA_PRIORITY, priority)
