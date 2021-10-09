@@ -12,9 +12,11 @@ class SplashActivity : AppCompatActivity() {
         supportActionBar?.hide()
         Handler().postDelayed({
 
-            startActivity(Intent(this,MainActivity::class.java))
-            finish()
-
+//             startActivity(Intent(this,MainActivity::class.java))
+//             finish()
+             Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+            putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, ringtoneType)
+             }
         },2000)
     }
 }
