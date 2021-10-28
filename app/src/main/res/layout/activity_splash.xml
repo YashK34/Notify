@@ -21,3 +21,17 @@
         app:lottie_rawRes="@raw/splash" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+##############improved complexity of code by suyash khantwal#####################
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/edit_text_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/title1"
+        android:inputType="text"
+        android:autofillHints="" />
