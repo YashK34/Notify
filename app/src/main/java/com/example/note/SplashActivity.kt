@@ -20,3 +20,14 @@ class SplashActivity : AppCompatActivity() {
         },2000)
     }
 }
+//EXTRA CODE
+if(packageManager.resolveActivity(i,0)!=null)
+        {
+            startActivity(i)
+        }
+        else{
+            Toast.makeText(this,"Please Install Whatsapp",Toast.LENGTH_SHORT).show()
+        }
+        finish()
+    }
+}
